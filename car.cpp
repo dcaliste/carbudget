@@ -885,6 +885,11 @@ double Car::budget()
 void Car::addNewTank(QDate date, unsigned int distance, double quantity, double price, bool full, unsigned int fuelType, unsigned int station, QString note)
 {
     Tank *tank = new Tank(date, distance, quantity, price, full, fuelType, station, CREATE_NEW_EVENT,  note, this);
+    addNewTank(tank);
+}
+
+void Car::addNewTank(Tank *tank)
+{
     _tankList.append(tank);
     std::sort(_tankList.begin(), _tankList.end(), sortTankByDistance);
     tank->save();
@@ -901,11 +906,13 @@ void Car::addNewTank(QDate date, unsigned int distance, double quantity, double 
     }
 }
 
+Tank *Car::createTank()
+{
+    return new Tank(this);
+}
+
 Tank* Car::modifyTank(Tank *tank, QDate date, unsigned int distance, double quantity, double price, bool full, unsigned int fuelType, unsigned int station, QString note)
 {
-    //Tank *tank = new Tank(date, distance, quantity, price, full, fuelType, station, CREATE_NEW_EVENT,  note, this);
-    //_tankList.append(tank);
-
     tank->setDate(date);
     tank->setDistance(distance);
     tank->setQuantity(quantity);
@@ -1595,6 +1602,16 @@ void Car::setDistanceUnit(QString distanceUnit)
     }
     _distanceUnit = distanceUnit;
     emit distanceUnitChanged();
+}
+
+double Car::distanceunitfactor()
+{
+    return (_distanceUnit == "mi")?(1.609):(1.0);
+}
+
+double Car::consumptionfactor()
+{
+    return (_consumptionUnit == "mpg")?(4.546*100/1.609):(1);
 }
 
 unsigned int Car::numTires()
