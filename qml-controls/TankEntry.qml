@@ -2,8 +2,9 @@ import QtQuick 2.4
 import QtQuick.Controls 2.2
 import harbour.carbudget 1.0
 
-Dialog {
-    id: dialog
+TankEntryForm {
+    id: tankEntry
+    property Tank tank
 
     Menu {
         id: contextMenu
@@ -21,54 +22,34 @@ Dialog {
         }
     }
 
-
-
-    signal finished(string fullName, string address, string city, string number)
-
-    function createTank() {
-        form.kminput.clear();
-        form.quantityinput.clear();
-        form.priceinput.clear();
-        form.unitpriceinput.clear();
-        form.cbfuelType.currentIndex = 0
-        form.cbstation.currentIndex = 0
-        form.fullinput.checked = true
-        form.noteinput.clear()
-
-        dialog.title = qsTr("Add Tank");
-        dialog.open();
+    Component.onCompleted: {
+        if(!!tank)
+        {
+            console.log("MODIFY")
+            kminput.text = tank.distance;
+            quantityinput.text = tank.quantity;
+            priceinput.text = tank.price;
+            unitpriceinput.text = tank.pricePerUnit;
+            fullinput.checked = tank.full
+            noteinput.text = tank.note
+            title = qsTr("Edit Tank");
+        }
+        else
+        {
+            console.log("CREATE")
+            kminput.clear();
+            quantityinput.clear();
+            priceinput.clear();
+            unitpriceinput.clear();
+            cbfuelType.currentIndex = 0
+            cbstation.currentIndex = 0
+            cbstation2.text = manager.car.stations[0].name
+            fullinput.checked = true
+            noteinput.clear()
+            title = qsTr("Add Tank");
+        }
     }
 
-    function editTank(tank) {
-        form.kminput.text = tank.kminput;
-        form.quantityinput.text = tank.quantityinput;
-        form.priceinput.text = tank.priceinput;
-        form.unitpriceinput.text = tank.unitpriceinput;
-                /*
-        form.cbfuelType.currentIndex = 0
-        form.cbstation.currentIndex = 0
-        form.fullinput.checked = true
-        form.noteinput.text =
-        */
-
-
-
-        dialog.title = qsTr("Edit Tank");
-        dialog.open();
-    }
-
-    x: parent.width / 2 - width / 2
-    y: parent.height / 2 - height / 2
-    focus: true
-    modal: true
-    title: qsTr("Tank Entry")
-    standardButtons: Dialog.Ok | Dialog.Cancel
-
-    contentItem: TankEntryForm {
-        id: form
-    }
-
-    onAccepted: finished(form.fullName.text, form.address.text, form.city.text, form.number.text)
 
     /*
     kminput {

@@ -12,8 +12,7 @@ TankViewForm {
         MenuItem {
             text: qsTr("New Tank")
             onClicked: {
-                currentTank = -1
-                tankDialog.createTank()
+                stackView.push("TankEntry.qml")
             }
         }
     }
@@ -25,20 +24,7 @@ TankViewForm {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onClicked: {
-            currentTank = -1
-            tankDialog.createTank()
-        }
-    }
-
-    TankEntry {
-        id: tankDialog
-        onFinished: {
-            /*
-            if (currentContact === -1)
-                contactView.model.append(fullName, address, city, number)
-            else
-                contactView.model.set(currentContact, fullName, address, city, number)
-            */
+            stackView.push("TankEntry.qml")
         }
     }
 }
