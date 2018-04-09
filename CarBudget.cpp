@@ -18,12 +18,17 @@
  * Authors: Fabien Proriol
  */
 
-
+#ifdef SAILFISH
+#include <sailfishapp.h>
 #ifdef QT_QML_DEBUG
 #include <QtQuick>
 #endif
+#else
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#endif
 
-#include <sailfishapp.h>
 #include <QSettings>
 #include "tank.h"
 #include "cost.h"
@@ -51,8 +56,14 @@ int main(int argc, char *argv[])
 
     qDebug() << "Starting CarBudget" << APP_VERSION;
 
+#ifdef SAILFISH
     QGuiApplication *app = SailfishApp::application(argc, argv);
     QQuickView *view = SailfishApp::createView();
+#else
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication *app = new QGuiApplication(argc, argv);
+    QQmlApplicationEngine engine;
+#endif
 
     QTranslator translator;
     if(translator.load((QLocale::system().name() != "C")?(QLocale::system().name()):("en_GB"), "/usr/share/harbour-carbudget/translations/"))
@@ -75,13 +86,22 @@ int main(int argc, char *argv[])
 
     CarManager manager;
 
+#ifdef SAILFISH
     view->engine()->addImportPath("/usr/share/harbour-carbudget/qml");
     view->rootContext()->setContextProperty("manager", &manager);
     view->setSource(SailfishApp::pathTo("qml/Application.qml"));
     view->showFullScreen();
+#else
+    engine.rootContext()->setContextProperty("manager", &manager);
+    engine.load(QUrl(QStringLiteral("qrc:/qml-controls/main.qml")));
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+#endif
 
     int errorlevel = app->exec();
     qDebug() << "CarBudget exited normally.";
+    delete app;
     return errorlevel;
 }
 

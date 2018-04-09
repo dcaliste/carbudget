@@ -6,11 +6,14 @@
 #         - desktop icon filename must be changed
 #         - desktop filename must be changed
 #         - icon definition filename in desktop file must be changed
-TARGET = harbour-carbudget
+TARGET = carbudget
 
-CONFIG += sailfishapp sailfishapp_i18n
-QT += sql xml
-DEFINES += SAILFISH APP_VERSION=\"\\\"$${VERSION}\\\"\"
+DEFINES += QT_DEPRECATED_WARNINGS
+QMAKE_CXXFLAGS += -Wall -Wextra -pedantic
+
+QT += quick sql xml
+CONFIG += c++11
+DEFINES += APP_VERSION=\"\\\"$${VERSION}\\\"\"
 QML_IMPORT_PATH += qml
 
 TRANSLATIONS = translations/de_DE.ts \
@@ -21,10 +24,10 @@ TRANSLATIONS = translations/de_DE.ts \
                translations/sv_SE.ts
 
 lupdate_only{
-    SOURCES += qml/*.qml \
-    SOURCES += qml/pages/*.qml \
-    SOURCES += qml/jbQuick/Charts/*.qml \
-    SOURCES += qml/jbQuick/Charts/*.js
+    SOURCES += qml-controls/*.qml \
+    SOURCES += qml-controls/pages/*.qml \
+    SOURCES += qml-controls/jbQuick/Charts/*.qml \
+    SOURCES += qml-controls/jbQuick/Charts/*.js
 }
 
 HEADERS += \
@@ -58,8 +61,15 @@ SOURCES += CarBudget.cpp \
     statfileinfo.cpp \
     globals.cpp
 
-OTHER_FILES += rpm/CarBudget.yaml \
-    harbour-carbudget.desktop
 
 RESOURCES += \
-    Resources.qrc
+    qml.qrc
+
+    
+# Additional import path used to resolve QML modules in Qt Creator's code model
+QML_IMPORT_PATH =
+
+# Additional import path used to resolve QML modules just for Qt Quick Designer
+QML_DESIGNER_IMPORT_PATH =
+
+DISTFILES +=
